@@ -29,7 +29,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 @Plugin(id = "obsidiantolava", name = "ObsidianToLava-Sponge", authors = {
-		"runescapejon" }, description = "Right Click Obsidian with an empty bucket to get a Lava Bucket if they have permission!", version = "1.1")
+		"runescapejon" }, description = "Right Click Obsidian with an empty bucket to get a Lava Bucket if they have permission!", version = "1.2")
 public class Obsidian {
 
 	private ConfigurationNode Config;
@@ -79,24 +79,28 @@ public class Obsidian {
 		if (p.hasPermission("obsidian.lava")) {
 			if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
 				ItemStack stack = p.getItemInHand(HandTypes.MAIN_HAND).get();
+
 				if (stack.getType().equals(ItemTypes.BUCKET)) {
-					Location<World> block = event.getTargetBlock().getLocation().get();
-					if (block.getBlock().getType() == BlockTypes.OBSIDIAN) {
-						if (p.getInventory().query(QueryOperationTypes.INVENTORY_TYPE.of(GridInventory.class),
-								QueryOperationTypes.INVENTORY_TYPE.of(Hotbar.class)).size() == 36) {
-							p.sendMessage(Text.of(msg2));
-							return;
+					//need isPresent() because i am getting No value present error
+					if (event.getTargetBlock().getLocation().isPresent()) {
+						Location<World> block = event.getTargetBlock().getLocation().get();
+						if (block.getBlock().getType() == BlockTypes.OBSIDIAN) {
+							if (p.getInventory().query(QueryOperationTypes.INVENTORY_TYPE.of(GridInventory.class),
+									QueryOperationTypes.INVENTORY_TYPE.of(Hotbar.class)).size() == 36) {
+								p.sendMessage(Text.of(msg2));
+								return;
+							}
+							int quantity = stack.getQuantity();
+							stack.setQuantity(quantity - 1);
+							p.setItemInHand(HandTypes.MAIN_HAND, stack);
+							p.sendMessage(Text.of(msg));
+							block.setBlockType(BlockTypes.AIR);
+							p.getInventory().offer(ItemStack.of(ItemTypes.LAVA_BUCKET, 1));
+
 						}
-						int quantity = stack.getQuantity();
-						stack.setQuantity(quantity - 1);
-						p.setItemInHand(HandTypes.MAIN_HAND, stack);
-						p.sendMessage(Text.of(msg));
-						block.setBlockType(BlockTypes.AIR);
-						p.getInventory().offer(ItemStack.of(ItemTypes.LAVA_BUCKET, 1));
-
 					}
-				}
 
+				}
 			}
 		}
 	}
