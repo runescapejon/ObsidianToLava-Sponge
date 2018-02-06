@@ -29,7 +29,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 @Plugin(id = "obsidiantolava", name = "ObsidianToLava-Sponge", authors = {
-		"runescapejon" }, description = "Right Click Obsidian with an empty bucket to get a Lava Bucket if they have permission!", version = "1.0")
+		"runescapejon" }, description = "Right Click Obsidian with an empty bucket to get a Lava Bucket if they have permission!", version = "1.1")
 public class Obsidian {
 
 	private ConfigurationNode Config;
@@ -77,10 +77,10 @@ public class Obsidian {
 		Text msg = Text.builder().append(Language.getInventoryMsg()).build();
 		Text msg2 = Text.builder().append(Language.getInventorySpaceMsg()).build();
 		if (p.hasPermission("obsidian.lava")) {
-			Location<World> block = event.getTargetBlock().getLocation().get();
 			if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
 				ItemStack stack = p.getItemInHand(HandTypes.MAIN_HAND).get();
 				if (stack.getType().equals(ItemTypes.BUCKET)) {
+					Location<World> block = event.getTargetBlock().getLocation().get();
 					if (block.getBlock().getType() == BlockTypes.OBSIDIAN) {
 						if (p.getInventory().query(QueryOperationTypes.INVENTORY_TYPE.of(GridInventory.class),
 								QueryOperationTypes.INVENTORY_TYPE.of(Hotbar.class)).size() == 36) {
